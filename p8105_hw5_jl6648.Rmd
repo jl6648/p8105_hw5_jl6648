@@ -5,5 +5,50 @@ author: Jixin Li
 date: "2023-11-07"
 ---
 
+```{r}
+library(tidyverse)
+library(patchwork)
 
+knitr::opts_chunk$set(
+  fig.width = 6,
+  fig.asp = .6,
+  out.width = "95%"
+)
+
+theme_set(theme_minimal() + theme(legend.position = 'bottom'))
+
+options(
+  ggplot2.continuous.colour = 'viridis',
+  ggplot2.continuous.fill = 'viridis'
+)
+
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+```
+
+# problem 1
+
+
+# problem 2
+
+## Start with a dataframe containing all file names
+```{r}
+files_df <- tibble(
+  files = list.files("data")) |>
+  mutate(files = str_c("data", files, sep = "/"))
+```
+
+## Iterate over file names and read in data for each subject and tidy the result
+```{r}
+study_df <- files_df |>
+  mutate(respondents = map(files, read_csv)) |>
+  mutate(arm_type = case_when(str_detect(files, "exp") ~ "experiment",
+                               str_detect(files, "con") ~ "control"),
+          subject_id = as.factor(parse_number(files))) |>
+  unnest(respondents) |>
+  pivot_longer(week_1:week_8, 
+               names_to = "week", 
+               values_to = "observations") |>
+  mutate(week = as.numeric(parse_number(week)))
+```
 
