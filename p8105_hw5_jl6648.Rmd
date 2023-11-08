@@ -71,11 +71,11 @@ the trend of observations between control and experimental group is different. I
 
 ## conduct a function and hypothesis test
 ```{r}
-set.seed(1)
+set.seed(327)
 
-sim_normal = function(n = 30, mu, sigma = 5){
+sim_normal <- function(n = 30, mu, sigma = 5){
   x = rnorm(n, mean = mu, sd = sigma)
-  test = t.test(x, mu = 0, alternative = "two.sided", conf.level = 0.95) |>
+  test <- t.test(x = x, alternative = "two.sided", conf.level = 0.95) |>
     broom::tidy() |>
     select(estimate, p.value)
 }
@@ -83,13 +83,8 @@ sim_normal = function(n = 30, mu, sigma = 5){
 
 ## Set μ=0 and generate 5000 datasets from the model
 ```{r}
-sim_0 = vector("list", length = 5000)
-
-for (i in 1:5000) {
-  sim_0[[i]] = sim_normal(mu = 0)
-}
-
-sim_0_results = bind_rows(sim_0)
+sim_mu_0 <- rerun(5000, sim_normal(mu = 0)) |>
+  bind_rows()
 ```
 
 ## Repeat the above for μ={1,2,3,4,5,6}
@@ -98,9 +93,27 @@ sim_mu =
   tibble(
     mu = c(1, 2, 3, 4, 5, 6)
     ) |>
-  mutate(outputs = map(mu, ~rerun(5000, sim_normal(mu=mu))),
+  mutate(outputs = map(.x = mu, ~ rerun(5000, sim_normal(30, mu = .x))),
          estimate = map(outputs, bind_rows)) |>
   unnest(estimate) |>
   select(-outputs)
 ```
 
+## Make a plot showing the proportion of times the null was rejected on the y axis and the true value of μ on the x axis
+```{r}
+  sim_mu |>
+  group_by(mu) |>
+  summarize(p_value = sum(p.value < 0.05), 
+            number = n(), 
+            reject_prop = p_value/number) |>
+  ggplot(aes(x = mu, y = reject_prop)) + 
+  geom_point() + 
+  geom_smooth() +
+  labs(
+    title = "Proportion of rejecting null hypothesis on each mu",
+    x = "True Value mu", 
+    y = "Proportion"
+  )
+```
+
+As mu increase from 1 to 6, the proportion of rejection null hypothesis increases. There is a positive correlation between power and effect size. 
