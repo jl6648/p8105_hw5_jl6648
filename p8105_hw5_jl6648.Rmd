@@ -188,7 +188,7 @@ sim_mu =
   )
 ```
 
-As mu increase from 1 to 6, the proportion of rejection null hypothesis increases. There is a positive correlation between power and effect size. 
+As mu increase from 0 to 6, the proportion of rejection null hypothesis increases. There is a positive correlation between power and effect size. 
 
 ## Make a plot showing the average estimate of μ̂ on the y axis and the true value of μ on the x axis.
 ```{r}
@@ -224,4 +224,4 @@ sim_mu |>
   )
 ```
 
-according to these two plots, as the true value mu increase, the sample average of μ̂ across tests for which the null is rejected is more likely to equal to the average estimate for true value of μ. From the plots, we can tell at the mu equal to 4, 5, 6, both plots have the same average estimate; however, at the mu equal to 1, 2, 3, the average estimate for rejecting null hypothesis samples is slightly higher than the average estimate for all samples. This is because there is variability in sample estimates, and even when the null hypothesis is rejected, there can be some estimation error. 
+according to these two plots, as the true value mu increase, the sample average of μ̂ across tests for which the null is rejected is more likely to equal to the average estimate for true value of μ. From the plots, we can tell at the mu equal to 4, 5, 6, both plots have the same average estimate; however, at the mu equal to 0, 1, 2, 3, the average estimate for rejecting null hypothesis samples is slightly higher than the average estimate for all samples. This is because there is variability in sample estimates, and even when the null hypothesis is rejected, there can be some estimation error. 
